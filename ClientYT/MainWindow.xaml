@@ -247,7 +247,7 @@
         <Label Content="Enter YouTube URL:" Grid.Row="0" Margin="10" FontSize="14" Foreground="#FFCFD8DC"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10">
             <TextBox x:Name="txtUrl" Width="300" Text="Enter YouTube URL" GotFocus="TxtUrl_GotFocus" Style="{StaticResource ModernTextBoxStyle}"/>
-            <Button x:Name="btnClear" Content="Clear" Width="80" Style="{StaticResource ModernButtonStyle}"/>
+            <Button x:Name="btnClear" Content="Clear" Width="80" Style="{StaticResource ModernButtonStyle}" Click="btnClear_Click"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
             <Label Content="Select Format:" FontSize="14" Foreground="#FFCFD8DC"/>
@@ -255,8 +255,8 @@
                 <ComboBoxItem Content="MP4" IsSelected="True"/>
                 <ComboBoxItem Content="MP3"/>
             </ComboBox>
-            <Button x:Name="btnAddToQueue" Content="Add to Queue" Width="100" Style="{StaticResource ModernButtonStyle}"/>
-            <Button x:Name="btnDownload" Content="Download Queue" Width="100" Style="{StaticResource ModernButtonStyle}"/>
+            <Button x:Name="btnAddToQueue" Content="Add to Queue" Width="100" Style="{StaticResource ModernButtonStyle}" Click="btnAddToQueue_Click"/>
+            <Button x:Name="btnDownload" Content="Download Queue" Width="100" Style="{StaticResource ModernButtonStyle}" Click="btnDownload_Click"/>
         </StackPanel>
         <ListBox x:Name="lstQueue" Grid.Row="3" Margin="10" Width="400" Height="100" HorizontalAlignment="Left" Style="{StaticResource ModernListBoxStyle}"/>
         <ProgressBar x:Name="progressBar" Grid.Row="4" Width="300" Margin="10" Minimum="0" Maximum="100" Visibility="Hidden" HorizontalAlignment="Center" Style="{StaticResource ModernProgressBarStyle}"/>

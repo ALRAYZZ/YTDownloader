@@ -13,7 +13,11 @@ public class YouTubeDownloaderService
 	public YouTubeDownloaderService(string? ffmpegPath = null)
 	{
 		_youtubeClient = new YoutubeClient();
-		_ffmpegPath = ffmpegPath ?? Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg", "ffmpeg.exe"));
+		_ffmpegPath = ffmpegPath ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg", "ffmpeg.exe");
+		if (!Directory.Exists(_ffmpegPath) || !File.Exists(Path.Combine(_ffmpegPath, "ffmpeg.exe")))
+		{
+			_ffmpegPath = AppDomain.CurrentDomain.BaseDirectory;
+		}
 		FFmpeg.SetExecutablesPath(_ffmpegPath);
 		string fullPath = Path.Combine(_ffmpegPath, "ffmpeg.exe");
 	}

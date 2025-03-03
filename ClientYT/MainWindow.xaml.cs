@@ -152,7 +152,17 @@ namespace ClientYT
 		}
 		private void btnClear_Click(object sender, RoutedEventArgs e)
 		{
-			txtUrl.Text = "Enter YouTube URL"; // Reset to placeholder text
+			try
+			{
+				txtUrl.Text = "Enter YouTube URL"; // Reset to placeholder text
+				lblStatus.Content = "Ready";
+			}
+			catch (Exception ex)
+			{
+				lblStatus.Content = "Error";
+				MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+			
 		}
 		private void TxtUrl_GotFocus(object sender, RoutedEventArgs e)
 		{
