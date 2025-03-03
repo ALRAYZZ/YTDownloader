@@ -6,7 +6,235 @@
         xmlns:local="clr-namespace:ClientYT"
         mc:Ignorable="d"
         Title="YouTube Downloader" Height="500" Width="800">
+    <Window.Background>
+    <SolidColorBrush Color="#FF121212"/> <!-- Solid dark grey -->
+    </Window.Background>
+    <Window.Resources>
+        <!-- Define a subtle shadow effect -->
+        <DropShadowEffect x:Key="MaterialDesignShadow" ShadowDepth="2" Direction="315" Color="Black" Opacity="0.3" BlurRadius="5"/>
+        <!-- Define a style for all buttons -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FF4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#FF388E3C"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5,0,0,0"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5"
+                            Effect="{StaticResource MaterialDesignShadow}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF66BB6A"/>
+                                <Setter Property="BorderBrush" Value="#FF4CAF50"/>
+                                <!-- Add animation -->
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                    To="1.05" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                    To="1.05" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                    To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                    To="1" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#FFB0BEC5"/>
+                                <Setter Property="Foreground" Value="#FF78909C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#FF2A2A2A"/>
+            <!-- Dark grey background -->
+            <Setter Property="Foreground" Value="#FFCFD8DC"/>
+            <!-- Light grey text -->
+            <Setter Property="BorderBrush" Value="#FF424242"/>
+            <!-- Slightly lighter grey border -->
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="2"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Focus effect -->
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF4CAF50"/>
+                                <!-- Green border on focus -->
+                                <Setter Property="Background" Value="#FF383838"/>
+                                <!-- Slightly lighter background -->
+                            </Trigger>
+                            <!-- Hover effect -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF616161"/>
+                            </Trigger>
+                            <!-- Disabled effect -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#FF1E1E1E"/>
+                                <Setter Property="Foreground" Value="#FF78909C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernListBoxStyle" TargetType="ListBox">
+            <Setter Property="Background" Value="#FF2A2A2A"/>
+            <!-- Same dark grey -->
+            <Setter Property="Foreground" Value="#FFCFD8DC"/>
+            <!-- Same light grey -->
+            <Setter Property="BorderBrush" Value="#FF424242"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <ScrollViewer Margin="2">
+                                <ItemsPresenter/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#FFCFD8DC"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#FF4CAF50"/>
+                                <!-- Green selection -->
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF383838"/>
+                                <!-- Slightly lighter grey on hover -->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="#FF2A2A2A"/>
+            <Setter Property="Foreground" Value="#FFCFD8DC"/>
+            <Setter Property="BorderBrush" Value="#FF424242"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <Grid>
+                                <ToggleButton x:Name="ToggleButton" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
+                                    <Path x:Name="Arrow" Fill="#FFCFD8DC" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                </ToggleButton>
+                                <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" Margin="3,3,23,3" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                <TextBox x:Name="PART_EditableTextBox" IsReadOnly="{TemplateBinding IsReadOnly}" Visibility="Hidden"/>
+                                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                    <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                        <Border x:Name="DropDownBorder" Background="#FF383838" BorderBrush="#FF424242" BorderThickness="1" CornerRadius="5"/>
+                                        <ScrollViewer Margin="4,6,4,6">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF616161"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#FF1E1E1E"/>
+                                <Setter Property="Foreground" Value="#FF78909C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Background" Value="#FF383838"/>
+            <!-- Darker grey background -->
+            <Setter Property="Foreground" Value="#FF4CAF50"/>
+            <!-- Keep green fill -->
+            <Setter Property="BorderBrush" Value="#FF424242"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <Grid>
+                                <Rectangle x:Name="PART_Track"/>
+                                <Rectangle x:Name="PART_Indicator" HorizontalAlignment="Left" Fill="{TemplateBinding Foreground}" RadiusX="5" RadiusY="5"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -16,22 +244,22 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Label Content="Enter YouTube URL:" Grid.Row="0" Margin="10"/>
+        <Label Content="Enter YouTube URL:" Grid.Row="0" Margin="10" FontSize="14" Foreground="#FFCFD8DC"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10">
-            <TextBox x:Name="txtUrl" Width="300" Text="Enter YouTube URL" GotFocus="TxtUrl_GotFocus"/>
-            <Button x:Name="btnClear" Content="Clear" Width="80" Margin="5,0,0,0" Click="btnClear_Click"/>
+            <TextBox x:Name="txtUrl" Width="300" Text="Enter YouTube URL" GotFocus="TxtUrl_GotFocus" Style="{StaticResource ModernTextBoxStyle}"/>
+            <Button x:Name="btnClear" Content="Clear" Width="80" Style="{StaticResource ModernButtonStyle}"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10">
-            <Label Content="Select Format:"/>
-            <ComboBox x:Name="cmbFormat" Width="100" Margin="5,0">
+            <Label Content="Select Format:" FontSize="14" Foreground="#FFCFD8DC"/>
+            <ComboBox x:Name="cmbFormat" Width="100" Margin="5,0" Style="{StaticResource ModernComboBoxStyle}">
                 <ComboBoxItem Content="MP4" IsSelected="True"/>
                 <ComboBoxItem Content="MP3"/>
             </ComboBox>
-            <Button x:Name="btnAddToQueue" Content="Add to Queue" Width="100" Margin="5,0,0,0" Click="btnAddToQueue_Click"/>
-            <Button x:Name="btnDownload" Content="Download Queue" Width="100" Margin="5,0,0,0" Click="btnDownload_Click"/>
+            <Button x:Name="btnAddToQueue" Content="Add to Queue" Width="100" Style="{StaticResource ModernButtonStyle}"/>
+            <Button x:Name="btnDownload" Content="Download Queue" Width="100" Style="{StaticResource ModernButtonStyle}"/>
         </StackPanel>
-        <ListBox x:Name="lstQueue" Grid.Row="3" Margin="10" Width="400" Height="100" HorizontalAlignment="Left"/>
-        <ProgressBar x:Name="progressBar" Grid.Row="4" Height="20" Width="300" Margin="10" Minimum="0" Maximum="100" Visibility="Hidden" HorizontalAlignment="Center"/>
-        <Label x:Name="lblStatus" Content="Ready" Grid.Row="5" Margin="10" HorizontalAlignment="Center"/>
+        <ListBox x:Name="lstQueue" Grid.Row="3" Margin="10" Width="400" Height="100" HorizontalAlignment="Left" Style="{StaticResource ModernListBoxStyle}"/>
+        <ProgressBar x:Name="progressBar" Grid.Row="4" Width="300" Margin="10" Minimum="0" Maximum="100" Visibility="Hidden" HorizontalAlignment="Center" Style="{StaticResource ModernProgressBarStyle}"/>
+        <Label x:Name="lblStatus" Content="Ready" Grid.Row="5" Margin="10" HorizontalAlignment="Center" FontSize="14" Foreground="#FFCFD8DC"/>
     </Grid>
 </Window>
