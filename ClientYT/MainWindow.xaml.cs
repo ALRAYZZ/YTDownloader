@@ -6,7 +6,7 @@ namespace ClientYT
 	public partial class MainWindow : Window
 	{
 		private readonly YouTubeDownloaderService _youTubeDownloaderService;
-		private readonly List<(string Url, string Format, string OutputPath)> _downloadQueue;
+		private readonly List<(string Url, string Format, string OutputPath, string Title)> _downloadQueue;
 		private bool _isDownloading;
 
 		public MainWindow()
@@ -14,7 +14,7 @@ namespace ClientYT
 			InitializeComponent();
 			string ffmpegPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg");
 			_youTubeDownloaderService = new YouTubeDownloaderService(ffmpegPath);
-			_downloadQueue = new List<(string Url, string Format, string OutputPath)>();
+			_downloadQueue = new List<(string Url, string Format, string OutputPath, string Title)>();
 			_isDownloading = false;
 		}
 		private async void btnAddToQueue_Click(object sender, RoutedEventArgs e)
@@ -38,11 +38,16 @@ namespace ClientYT
 				return;
 			}
 
+			lblStatus.Content = "Fetching video information ...";
+			var video = await _youTubeDownloaderService.GetVideoTitleAsync(url);
+			string videoTitle = video.Title.Length > 50 ? video.Title.Substring(0, 47) + "..." : video.Title;
+
 			var saveFileDialog = new Microsoft.Win32.SaveFileDialog
 			{
 				Title = $"Save {selectedFormat.ToUpper()} File As",
 				Filter = $"{selectedFormat.ToUpper()} Files (*.{selectedFormat.ToLower()})|*.{selectedFormat.ToLower()}",
-				DefaultExt = $".{selectedFormat.ToLower()}"
+				DefaultExt = $".{selectedFormat.ToLower()}",
+				FileName = $"{(videoTitle)}.{selectedFormat.ToLower()}"
 			};
 
 			if (saveFileDialog.ShowDialog() != true)
@@ -52,8 +57,8 @@ namespace ClientYT
 			}
 
 			string outPath = saveFileDialog.FileName;
-			_downloadQueue.Add((url, selectedFormat, outPath));
-			lstQueue.Items.Add($"{url} ({selectedFormat})");
+			_downloadQueue.Add((url, selectedFormat, outPath, videoTitle));
+			lstQueue.Items.Add($"{videoTitle} ({selectedFormat})");
 			lblStatus.Content = $"Added to download queue ({_downloadQueue.Count} items)";
 			txtUrl.Text = "Enter YouTube URL"; // Reset to placeholder text
 		}
@@ -87,8 +92,8 @@ namespace ClientYT
 
 			while (_downloadQueue.Any())
 			{
-				var (url, format, outPath) = _downloadQueue[0];
-				lblStatus.Content = $"Downloading: {url} ({format})...";
+				var (url, format, outPath, title) = _downloadQueue[0];
+				lblStatus.Content = $"Downloading {totalItems - _downloadQueue.Count + 1}/{totalItems}: {title} ({format})...";
 
 				try
 				{
@@ -98,7 +103,7 @@ namespace ClientYT
 							percent => Dispatcher.Invoke(() =>
 							{
 								progressBar.Value = percent;
-								lblStatus.Content = percent < 50 ? "Downloading Video..." : "Merging Streams...";
+								lblStatus.Content = percent < 50 ? $"Downloading Video {totalItems - _downloadQueue.Count + 1}/{totalItems}..." : $"Merging Streams {totalItems - _downloadQueue.Count + 1}/{totalItems}...";
 							}));
 					}
 					else if (format == "MP3")
@@ -107,11 +112,11 @@ namespace ClientYT
 							percent => Dispatcher.Invoke(() =>
 							{
 								progressBar.Value = percent;
-								lblStatus.Content = "Converting to MP3..."; // MP3 conversion status
+								lblStatus.Content = $"Converting to MP3 {totalItems - _downloadQueue.Count + 1}/{totalItems}..."; // MP3 conversion status
 							}));
 					}
 
-					lblStatus.Content = "Download completed successfully";
+					lblStatus.Content = $"Completed {totalItems - _downloadQueue.Count}/{totalItems}: {title}";
 				}
 				catch (System.IO.IOException ex)
 				{
@@ -149,6 +154,34 @@ namespace ClientYT
 			btnAddToQueue.IsEnabled = true;
 			lblStatus.Content = "All downloads completed";
 
+		}
+		private void btnDelete_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				if (lstQueue.SelectedIndex != -1) // -1 means no item is selected
+				{
+					int selectedIndex = lstQueue.SelectedIndex;
+					var (url, format, outPath, title) = _downloadQueue[selectedIndex];
+					_downloadQueue.RemoveAt(selectedIndex);
+					lstQueue.Items.RemoveAt(selectedIndex);
+					lblStatus.Content = $"Deleted '{title}' from queue ({_downloadQueue.Count} items remaining)";
+
+					if (_downloadQueue.Count == 0)
+					{
+						lblStatus.Content = "Ready";
+					}
+				}
+				else
+				{
+					lblStatus.Content = "Error: No item selected to delete";
+				}
+			}
+			catch (Exception ex)
+			{
+				lblStatus.Content = "Error";
+				MessageBox.Show($"Error in Delete: {ex.Message}\nStackTrace: {ex.StackTrace}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 		private void btnClear_Click(object sender, RoutedEventArgs e)
 		{

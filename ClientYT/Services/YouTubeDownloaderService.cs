@@ -4,6 +4,7 @@ using Xabe.FFmpeg;
 using System.IO;
 using System.Diagnostics;
 using System.Windows;
+using YoutubeExplode.Videos;
 
 public class YouTubeDownloaderService
 {
@@ -43,7 +44,6 @@ public class YouTubeDownloaderService
 			return (false, $"Failed to validate URL: {ex.Message}");
 		}
 	}
-
 	public async Task DownloadMp4Async(string url, string outputPath, Action<double>? onProgressUpdated = null)
 	{
 		var video = await _youtubeClient.Videos.GetAsync(url);
@@ -100,7 +100,6 @@ public class YouTubeDownloaderService
 			}
 		}
 	}
-
 	public async Task<string> DownloadAudioAsync(string url)
 	{
 		var video = await _youtubeClient.Videos.GetAsync(url);
@@ -110,7 +109,6 @@ public class YouTubeDownloaderService
 		await _youtubeClient.Videos.Streams.DownloadAsync(audioStream, tempFilePath);
 		return tempFilePath;
 	}
-
 	public async Task ConvertToMp3Async(string inputPath, string outputPath, Action<double>? onProgressUpdated = null)
 	{
 		EnsureFFmpegExists();
@@ -139,7 +137,6 @@ public class YouTubeDownloaderService
 			throw new Exception($"Conversion failed: {ex.Message}", ex);
 		}
 	}
-
 	public async Task DownloadMp3Async(string url, string outputPath, Action<double>? onProgressUpdated = null)
 	{
 		string tempFile = await DownloadAudioAsync(url);
@@ -155,7 +152,17 @@ public class YouTubeDownloaderService
 			throw;
 		}
 	}
-
+	public async Task<Video> GetVideoTitleAsync(string url)
+	{
+		try
+		{
+			return await _youtubeClient.Videos.GetAsync(url);
+		}
+		catch (Exception ex)
+		{
+			throw new Exception($"Failed to fetch video title: {ex.Message}", ex);
+		}
+	}
 	private static string SanitizeFileName(string name) =>
 		string.Join("_", name.Split(Path.GetInvalidFileNameChars()));
 }

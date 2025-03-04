@@ -256,6 +256,7 @@
                 <ComboBoxItem Content="MP3"/>
             </ComboBox>
             <Button x:Name="btnAddToQueue" Content="Add to Queue" Width="100" Style="{StaticResource ModernButtonStyle}" Click="btnAddToQueue_Click"/>
+            <Button x:Name="btnDelete" Content="Delete Selected" Width="100" Style="{StaticResource ModernButtonStyle}" Click="btnDelete_Click"/>
             <Button x:Name="btnDownload" Content="Download Queue" Width="100" Style="{StaticResource ModernButtonStyle}" Click="btnDownload_Click"/>
         </StackPanel>
         <ListBox x:Name="lstQueue" Grid.Row="3" Margin="10" Width="400" Height="100" HorizontalAlignment="Left" Style="{StaticResource ModernListBoxStyle}"/>
